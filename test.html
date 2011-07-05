@@ -1,0 +1,20 @@
+<html lang="en">
+<head>
+	<title>HTML5 Notifications shim test</title>
+	<script src="js/noti.shim.js" type="text/javascript"></script>
+</head>
+<body>
+	<div>Hello, some text here</div>
+	<script type="text/javascript">
+		window.onload = function() {
+			if(window.notifications.checkPermission() == 0) {
+				alert("You have permission!");
+			} else {
+				//window.notifications.requestPermission(window.onload);
+				var lorem = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+				window.notifications.createNotification('images/icon.png', 'Title', lorem).show();
+			}
+		}
+	</script>
+</body>
+</html>
