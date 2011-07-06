@@ -38,6 +38,26 @@
 	eraseCookie = function(name) {
 		createCookie(name,"",-1);
 	}
+
+	uuid = function() {
+	   var chars = '0123456789abcdef'.split('');
+
+	   var uuid = [], rnd = Math.random, r;
+	   uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+	   uuid[14] = '4'; // version 4
+
+	   for (var i = 0; i < 36; i++)
+	   {
+	      if (!uuid[i])
+	      {
+		 r = 0 | rnd()*16;
+
+		 uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r & 0xf];
+	      }
+	   }
+
+	   return uuid.join('');
+	}
 	
 	/* Begin my code. */
 	/* Begin Notification interface */
@@ -52,6 +72,7 @@
 			var icon, pic, title, body, content;
 			icon = document.createElement('div');
 			icon.style.float = "left";
+			icon.style.width = "19%";
 			pic = new Image();
 			pic.src = params.icon;
 			icon.appendChild(pic);
@@ -65,6 +86,7 @@
 
 			content = document.createElement('div');
 			content.style.float = "left";
+			content.style.width = "80%";
 			content.appendChild(title);
 			content.appendChild(body);
 		
@@ -73,22 +95,41 @@
 		}
 
 		elem = document.createElement('div');
-		elem.style.background = "blue";
+		elem.id = uuid();
+		elem.style.border = "1px solid black";
 		elem.style.position = "fixed";
+		elem.style.padding = "5px";
 		elem.style.margin = "5px";
 		elem.style.width = "250px";
-		elem.style.bottom = "0";
 		elem.style.right = "0";
 		elem.appendChild(c);
 
-		noti._elem = elem;
+		this._elem = elem;
 
 		return this;
 	}
 
 	noti.prototype.show = function() {
 		/* TODO show a notification */
-		document.body.appendChild(noti._elem);
+		var animate, h, self;
+		self = this;
+		
+		document.body.appendChild(self._elem);
+		animate = function() {
+			var elem, b;
+			elem = document.getElementById(self._elem.id);
+			b = parseInt(elem.style.bottom.split("px")[0]);
+			if(b < 0) {
+				b += 5;
+				elem.style.bottom = b + "px";
+				setTimeout(animate, 10);
+			}
+		}
+
+		h = self._elem.offsetHeight;
+		self._elem.style.bottom = "-" + h + "px";
+
+		setTimeout(animate, 50);
 	}
 
 	noti.prototype.cancel = function() {
