@@ -58,11 +58,19 @@
 
 	   return uuid.join('');
 	}
+
+	setText = function(elem, text) {
+		if(document.all) {
+			elem.innerText = text;
+		} else {
+			elem.textContent = text;
+		}
+	}
 	
 	/* Begin my code. */
 	/* Begin Notification interface */
 	noti = function(params) {
-		var c, elem;
+		var c, elem, nav, close;
 		c = document.createElement('div');
 
 		if(params.type === "html") {
@@ -70,6 +78,7 @@
 		} else {
 			/* TODO create the notification */
 			var icon, pic, title, body, content;
+
 			icon = document.createElement('div');
 			icon.style.float = "left";
 			icon.style.width = "19%";
@@ -79,10 +88,11 @@
 
 			title = document.createElement('div');
 			title.style.fontWeight = "bold";
-			title.innerText = params.title;
+			setText(title, params.title);
+
 
 			body = document.createElement('div');
-			body.innerText = params.body;
+			setText(body, params.body);
 
 			content = document.createElement('div');
 			content.style.float = "left";
@@ -94,14 +104,31 @@
 			c.appendChild(content);
 		}
 
+		c.style.padding = "5px";
+
+		nav = document.createElement('div');
+		nav.style.width = "100%";
+		nav.style.background = "#F5F5F5";
+		close = new Image();
+		close.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAB5SURBVDhPY5wz58n/0tIXDKSA7m4JBgZBwTP/SQUgPUyk2ISsFkWjkNBZBhBGB9jEsdoI0/zmwy+sBoEMRtH47p0x3DKQZjWly3A+shyGRpAAugJcYtQJHJDpuAIHPcAwQhWmAORkdD/jjA5kTdjYKLbSPeUwkpvIAVnXkmWW0kv9AAAAAElFTkSuQmCC";
+		close.style.float = "right";
+		close.style.cursor = "pointer";
+		close.onclick = function () {
+			document.body.removeChild(elem);
+		};
+		nav.appendChild(close);
+		var clear = document.createElement('div');
+		clear.style.clear = "both";
+		nav.appendChild(clear);
+
 		elem = document.createElement('div');
 		elem.id = uuid();
-		elem.style.border = "1px solid black";
-		elem.style.position = "fixed";
-		elem.style.padding = "5px";
+		elem.style.border = "1px solid #7D7D7D";
+		elem.style.position = "absolute";
 		elem.style.margin = "5px";
 		elem.style.width = "250px";
 		elem.style.right = "0";
+		elem.appendChild(nav);
 		elem.appendChild(c);
 
 		this._elem = elem;
@@ -113,6 +140,9 @@
 		/* TODO show a notification */
 		var animate, h, self;
 		self = this;
+
+		document.body.style.position = "relative";
+		document.body.style.overflow = "hidden";
 		
 		document.body.appendChild(self._elem);
 		animate = function() {
